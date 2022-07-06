@@ -1,0 +1,12 @@
+name: LootCrates
+version: '${project.version}'
+main: me.mike3132.lootcrates.Main
+api-version: 1.19
+authors: [ Mike3132 ]
+description: Ragnarok Loot Crate Plugin
+website: Ragnrok.icu
+commands:
+  LootCrate:
+    description: Gives Loot Crate
+    aliases: lc
+    permission: LootCrate.Give

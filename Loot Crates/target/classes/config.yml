@@ -1,0 +1,49 @@
+#                                                 🖥🖥🖥🖥🖥🖥🖥🖥🖥🖥🖥🖥🖥🖥
+#                                                   💻Loot Crates Config💻
+#                                                   🔥Coded By Mike3132🔥
+#                                                   💻Loot Crates Config💻
+#                                                 🖥🖥🖥🖥🖥🖥🖥🖥🖥🖥🖥🖥🖥🖥
+
+
+About: '&4LootCrates Coded by &5Mike3132 &f-> &dVersion 1.0'
+#☠☠☠☠ WARNING: DO NOT CHANGE ANYTHING ABOVE THIS LINE IT WILL BREAK THE PLUGIN!☠☠☠☠☠
+
+#📝📝📝📝Permissions📝📝📝📝📝
+#Fireworks.Give - Access to the give command
+#📝📝📝📝Permissions📝📝📝📝📝
+
+
+#This plugin DOES NOT support placeholder API for Placeholders.
+#You do not need placeholders for items.
+#Placeholder for players = %player%
+
+#✍✍✍✍You can Modify the following how you wish✍✍✍✍✍
+#Plugin Prefix
+Prefix: '&4&lLootCrates &f-> '
+
+
+#####NORMAL CRATE SECTION#####
+#This is the name and lore of the Normal Tier Crate
+Normal_Crate_Name: '&d&lLoot &b&lCrate'
+Normal_Crate_Lore:
+  - '&3Place this chest'
+  - '&6For a surprise'
+  - '&4WARNING: &cYou must place this outside'
+  - '&cWith Direct sky access for 25 blocks up'
+
+#This is the Loot for the Normal Tier Crate.
+#This crate has a random factor multiplier of 2 (This means you get the items very frequently).
+#items = Default Minecraft items (I have added a few for demonstration).
+#The number after the item represents the MAX number you want to give.
+#commands = Any command that can be run from console.
+NormalLoot:
+  items:
+    Diamond: 3
+    Stone: 7
+    Gold_Ingot: 5
+    Iron_Ingot: 3
+    Emerald: 2
+  commands:
+    - "msg %player% This is an example command"
+    - "msg %player% This is an second example command"
+#####NORMAL CRATE SECTION#####
