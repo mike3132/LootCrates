@@ -11,6 +11,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -34,7 +35,8 @@ public class NormalCrateEvents implements Listener {
     public static List<Location> lootLocation = new ArrayList<>();
 
 
-    @EventHandler
+
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerPlace(BlockPlaceEvent bb) {
         Player player = bb.getPlayer();
         Block block = bb.getBlock();
@@ -44,61 +46,65 @@ public class NormalCrateEvents implements Listener {
         NormalCrate normalCrate = new NormalCrate(this.plugin);
         ItemStack crate = normalCrate.getCrate();
 
-        if (player.getInventory().getItemInMainHand().isSimilar(crate)) {
+        if (!(bb.isCancelled())) {
+            if (player.getInventory().getItemInMainHand().isSimilar(crate)) {
 
-            playerLocation.getWorld().playEffect(playerLocation, Effect.END_GATEWAY_SPAWN, 1);
+                playerLocation.getWorld().playEffect(playerLocation, Effect.END_GATEWAY_SPAWN, 1);
 
-            Firework firework = chestLocation.getWorld().spawn(chestLocation, Firework.class);
-            FireworkMeta data = (FireworkMeta) firework.getFireworkMeta();
-            data.addEffect(FireworkEffect.builder().withColor(Color.FUCHSIA).with(FireworkEffect.Type.BALL_LARGE).withFlicker().build());
-            data.setPower(0);
-            firework.setFireworkMeta(data);
+                Firework firework = chestLocation.getWorld().spawn(chestLocation, Firework.class);
+                FireworkMeta data = (FireworkMeta) firework.getFireworkMeta();
+                data.addEffect(FireworkEffect.builder().withColor(Color.FUCHSIA).with(FireworkEffect.Type.BALL_LARGE).withFlicker().build());
+                data.setPower(0);
+                firework.setFireworkMeta(data);
 
-            chestLocation.getWorld().spawnParticle(Particle.REDSTONE, chestLocation.add(1, 0, 0), 10, new Particle.DustOptions(Color.RED, 5));
-            chestLocation.getWorld().spawnParticle(Particle.REDSTONE, chestLocation.add(-1, 0, 0), 10, new Particle.DustOptions(Color.BLUE, 5));
-            chestLocation.getWorld().spawnParticle(Particle.REDSTONE, chestLocation.add(0, 0, 1), 10, new Particle.DustOptions(Color.LIME, 5));
-            chestLocation.getWorld().spawnParticle(Particle.REDSTONE, chestLocation.add(1, 0, 0), 10, new Particle.DustOptions(Color.ORANGE, 5));
-            i++;
+                chestLocation.getWorld().spawnParticle(Particle.REDSTONE, chestLocation.add(1, 0, 0), 10, new Particle.DustOptions(Color.RED, 5));
+                chestLocation.getWorld().spawnParticle(Particle.REDSTONE, chestLocation.add(-1, 0, 0), 10, new Particle.DustOptions(Color.BLUE, 5));
+                chestLocation.getWorld().spawnParticle(Particle.REDSTONE, chestLocation.add(0, 0, 1), 10, new Particle.DustOptions(Color.LIME, 5));
+                chestLocation.getWorld().spawnParticle(Particle.REDSTONE, chestLocation.add(1, 0, 0), 10, new Particle.DustOptions(Color.ORANGE, 5));
+                i++;
 
-            block.setType(Material.AIR);
-
-
-            FallingBlock fallingBlock = chestLocation.getWorld().spawnFallingBlock(chestLocation.add(-1, 25, -1), Material.BEACON.createBlockData());
+                block.setType(Material.AIR);
 
 
-            if (!(playerCooldown.contains(player.getUniqueId()))) {
-                playerCooldown.add(player.getUniqueId());
-                player.sendMessage(Main.chatColor("" + this.plugin.getConfig().getString("Prefix") + "&6&lYou placed a crate"));
-            } else {
-                player.sendTitle(Main.chatColor("&4You are on cool down"), Main.chatColor("&2Enjoy some fireworks"), 10, 10, 10);
-                playerLocation.getWorld().playEffect(playerLocation, Effect.ANVIL_BREAK, 1);
-                bb.setCancelled(true);
-                fallingBlock.remove();
-            }
+                FallingBlock fallingBlock = chestLocation.getWorld().spawnFallingBlock(chestLocation.add(-1, 25, -1), Material.BEACON.createBlockData());
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
-                public void run() {
-                    if (playerCooldown.contains(player.getUniqueId())) {
-                        playerCooldown.remove(player.getUniqueId());
-                        String message = Main.chatColor("&a&l[&2&lCooldown Removed&a&l]");
-                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
-                    }
+
+                if (!(playerCooldown.contains(player.getUniqueId()))) {
+                    playerCooldown.add(player.getUniqueId());
+                    player.sendMessage(Main.chatColor("" + this.plugin.getConfig().getString("Prefix") + "&6&lYou placed a crate"));
+                } else {
+                    player.sendTitle(Main.chatColor("&4You are on cool down"), Main.chatColor("&2Enjoy some fireworks"), 10, 10, 10);
+                    playerLocation.getWorld().playEffect(playerLocation, Effect.ANVIL_BREAK, 1);
+                    bb.setCancelled(true);
+                    fallingBlock.remove();
                 }
-            }, 50L);
 
-            Bukkit.getScheduler().runTaskLater(this.plugin, new Runnable() {
-                public void run() {
-                    if (block.getType().equals(Material.BEACON)) {
-                        block.setType(Material.CHEST);
-                        block.getLocation().getWorld().spawnParticle(Particle.LAVA, block.getLocation(), 100);
-                        if (!(lootLocation.contains(chestLocation))) {
-                            lootLocation.add(block.getLocation());
-                            player.sendMessage(Main.chatColor("&4LootCrates &f-> &2&lYour loot is being generated"));
-                            player.sendMessage(Main.chatColor("&4LootCrates &f-> &6Click the chest to get your loot"));
+                Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                    public void run() {
+                        if (playerCooldown.contains(player.getUniqueId())) {
+                            playerCooldown.remove(player.getUniqueId());
+                            String message = Main.chatColor("&a&l[&2&lCooldown Removed&a&l]");
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
                         }
                     }
-                }
-            }, 45L);
+                }, 50L);
+
+                Bukkit.getScheduler().runTaskLater(this.plugin, new Runnable() {
+                    public void run() {
+                        if (block.getType().equals(Material.BEACON)) {
+                            block.setType(Material.CHEST);
+                            block.getLocation().getWorld().spawnParticle(Particle.LAVA, block.getLocation(), 100);
+                            if (!(lootLocation.contains(chestLocation))) {
+                                lootLocation.add(block.getLocation());
+                                player.sendMessage(Main.chatColor("&4LootCrates &f-> &2&lYour loot is being generated"));
+                                player.sendMessage(Main.chatColor("&4LootCrates &f-> &6Click the chest to get your loot"));
+                            }
+                        }
+                    }
+                }, 45L);
+            }
+        } else {
+            player.sendMessage(Main.chatColor("" + this.plugin.getConfig().getString("Prefix") + "&4&lError: &cAirdrop canceled because you can't place blocks here"));
         }
     }
 
